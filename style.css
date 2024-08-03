@@ -22,13 +22,13 @@ h1 {
 }
 
 #controls {
-    display: flex;
-    flex-direction: column;
-    justify-content: center; /* Align items vertically */
-    align-items: center; /* Align items horizontally */
-    gap: 20px;
-    margin-bottom: 20px;
-    font-size: 15px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* Align items vertically */
+  align-items: center; /* Align items horizontally */
+  gap: 20px;
+  margin-bottom: 20px;
+  font-size: 15px;
 }
 
 button {
@@ -40,15 +40,12 @@ button {
   cursor: pointer;
   font-size: 18px;
   width: 80%;
-
+  transition-duration: 0.4s;
 }
 
 button:hover {
   background-color: #0056b3;
-}
-
-#genre :hover {
-  background-color: #0056b3;
+  transform: scale(1.01);
 }
 
 select {
@@ -60,10 +57,129 @@ select {
   cursor: pointer;
   font-size: 18px;
   width: 80%;
+  transition: box-shadow 0.3s ease;
+}
 
+select:hover {
+  box-shadow: 0 0 10px rgba(0, 123, 255, 0.5);
 }
 
 #movie-details {
-    padding: 20px;
-    border-top: 2px solid #ccc;
+  padding: 20px;
+  border-top: 2px solid #ccc;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.3s ease, transform 0.3s ease;
 }
+
+#movie-details.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+#sliders {
+  gap: 20px;
+  font-size: 18px;
+  border: 2px;
+  cursor: pointer;
+  width: 80%;
+}
+
+input[type="range"] {
+  width: 100%;
+}
+
+label {
+  display: block;
+  margin-top: 20px;
+}
+
+input[type="range"] {
+  width: 100%;
+  -webkit-appearance: none;
+  background-color: #ddd;
+  border-radius: 5px;
+  height: 8px;
+  outline: none;
+  transition: background 0.3s ease-in-out;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 20px;
+  height: 20px;
+  background-color: #007bff;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: transform 0.3s ease, background-color 0.3s ease;
+}
+
+input[type="range"]:hover::-webkit-slider-thumb {
+  background-color: #0056b3;
+  transform: scale(1.2);
+}
+
+input[type="range"]::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  background-color: #007bff;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: transform 0.3s ease, background-color 0.3s ease;
+}
+
+input[type="range"]:hover::-moz-range-thumb {
+  background-color: #0056b3;
+  transform: scale(1.2);
+}
+
+img {
+    max-width: 100%; /* Allow the image to scale down with its container */
+    height: auto; /* Maintain the aspect ratio */
+    display: block; /* Remove inline spacing under the image */
+    margin: 0 auto; /* Center the image horizontally within the container */
+  }
+  
+/* Mobile Styles */
+@media (max-width: 768px) {
+    #app {
+      padding: 15px;
+    }
+  
+    h1 {
+      font-size: 24px;
+      margin-bottom: 30px;
+    }
+  
+    #controls {
+      gap: 15px;
+      font-size: 14px;
+    }
+  
+    button, select {
+      width: 100%;
+      font-size: 16px;
+    }
+  
+    button {
+      padding: 8px;
+    }
+  
+    select {
+      padding: 8px;
+    }
+  
+    #sliders {
+      font-size: 16px;
+      width: 100%;
+    }
+  
+    label {
+      margin-top: 15px;
+    }
+
+    #movie-details image {
+      width: 100%;
+    }
+  }
+  

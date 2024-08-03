@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="'viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Random Movie Recommendation</title>
     <link rel="stylesheet" href="style.css" />
   </head>
@@ -14,8 +14,38 @@
           <option value="">Select Genre</option>
         </select>
         <select id="language">
-          <option value="">Select Language</option>
+          <option value="">Select Original Language</option>
         </select>
+        <div id="sliders">
+          <div>
+            <label for="vote-average"
+              >Average Vote Score:
+              <span id="vote-average-display">5</span></label
+            >
+            <input
+              type="range"
+              id="vote-average"
+              min="0"
+              max="10"
+              step="0.1"
+              value="5"
+            />
+          </div>
+
+          <div>
+            <label for="vote-count"
+              >Number of Votes: <span id="vote-count-display">100</span></label
+            >
+            <input
+              type="range"
+              id="vote-count"
+              min="0"
+              max="50000"
+              step="100"
+              value="100"
+            />
+          </div>
+        </div>
         <button id="get-movie">Get Recommendation</button>
       </div>
       <div id="movie-details"></div>

@@ -3,8 +3,21 @@
 const apiKey = "f157fa7a4c265d4b4b4035a2dad50ea6"; // Replace with your TMDB API Key
 const genreSelect = document.getElementById("genre");
 const languageSelect = document.getElementById("language");
+const voteAverageSlider = document.getElementById("vote-average");
+const voteCountSlider = document.getElementById("vote-count");
+const voteAverageDisplay = document.getElementById("vote-average-display");
+const voteCountDisplay = document.getElementById("vote-count-display");
 const getMovieButton = document.getElementById("get-movie");
 const movieDetails = document.getElementById("movie-details");
+
+// Update slider displays
+voteAverageSlider.addEventListener("input", () => {
+  voteAverageDisplay.textContent = voteAverageSlider.value;
+});
+
+voteCountSlider.addEventListener("input", () => {
+  voteCountDisplay.textContent = voteCountSlider.value;
+});
 
 // Function to fetch available languages from TMDB
 async function fetchLanguages() {
@@ -50,11 +63,16 @@ async function fetchGenres() {
   }
 }
 
-// Function to fetch a random movie by genre and language
-async function fetchRandomMovie(genreId, language) {
+// Function to fetch a random movie by genre, language, and additional filters
+async function fetchRandomMovie(
+  genreId,
+  language,
+  voteAverageGte,
+  voteCountGte
+) {
   try {
     const response = await fetch(
-      `https://api.themoviedb.org/3/discover/movie?api_key=${apiKey}&with_genres=${genreId}&with_original_language=${language}&sort_by=popularity.desc`
+      `https://api.themoviedb.org/3/discover/movie?api_key=${apiKey}&with_genres=${genreId}&with_original_language=${language}&vote_average.gte=${voteAverageGte}&vote_count.gte=${voteCountGte}&sort_by=popularity.desc`
     );
 
     if (!response.ok)
@@ -71,8 +89,7 @@ async function fetchRandomMovie(genreId, language) {
       );
       displayMovieDetails(movieDetailsData);
     } else {
-      movieDetails.innerHTML =
-        "<p>No movies found for this genre and language.</p>";
+      movieDetails.innerHTML = "<p>No movies found for the given criteria.</p>";
     }
   } catch (error) {
     console.error("Error fetching movie data:", error);
@@ -86,7 +103,7 @@ async function fetchMovieDetails(movieId, language) {
   try {
     // Fetch movie details
     const movieResponse = await fetch(
-      `https://api.themoviedb.org/3/movie/${movieId}?api_key=${apiKey}&language=${language}`
+      `https://api.themoviedb.org/3/movie/${movieId}?api_key=${apiKey}&with_original_language=${language}`
     );
     if (!movieResponse.ok)
       throw new Error(`Error fetching movie details: ${movieResponse.status}`);
@@ -110,7 +127,6 @@ async function fetchMovieDetails(movieId, language) {
   }
 }
 
-// Function to display movie details on the page
 function displayMovieDetails(movie) {
   const director =
     movie.credits?.crew?.find((person) => person.job === "Director")?.name ||
@@ -122,26 +138,40 @@ function displayMovieDetails(movie) {
       .join(", ") || "N/A";
 
   movieDetails.innerHTML = `
-        <h2>${movie.title} (${movie.release_date.split("-")[0]})</h2>
-        <img src="https://image.tmdb.org/t/p/w500${movie.poster_path}" alt="${
+      <h2>${movie.title} (${movie.release_date?.split("-")[0] || "N/A"})</h2>
+      <img src="https://image.tmdb.org/t/p/w500${movie.poster_path}" alt="${
     movie.title
   } Poster">
-        <p><strong>Genre:</strong> ${movie.genres
-          .map((genre) => genre.name)
-          .join(", ")}</p>
-        <p><strong>Director:</strong> ${director}</p>
-        <p><strong>Actors:</strong> ${actors}</p>
-        <p><strong>Plot:</strong> ${movie.overview}</p>
-        <p><strong>Rating:</strong> ${movie.vote_average}/10</p>
-    `;
+      <p><strong>Genre:</strong> ${
+        movie.genres.map((genre) => genre.name).join(", ") || "N/A"
+      }</p>
+      <p><strong>Director:</strong> ${director}</p>
+      <p><strong>Actors:</strong> ${actors}</p>
+      <p><strong>Plot:</strong> ${movie.overview || "N/A"}</p>
+      <p><strong>Rating:</strong> ${movie.vote_average || "N/A"}/10</p>
+      <p><strong>Vote Count:</strong> ${movie.vote_count || "N/A"}</p>
+      <p><strong>Runtime:</strong> ${movie.runtime || "N/A"} minutes</p>
+      <p><strong>Budget:</strong> $${formatNumber(movie.budget) || "N/A"}</p>
+  `;
+
+  movieDetails.classList.add("show");
+}
+
+// Function to format large numbers with commas
+function formatNumber(num) {
+  return num ? num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") : "0";
 }
 
 // Event listener for the button
 getMovieButton.addEventListener("click", () => {
   const selectedGenre = genreSelect.value;
   const selectedLanguage = languageSelect.value || "en";
+  const voteAverage = voteAverageSlider.value;
+  const voteCount = voteCountSlider.value;
+  movieDetails.classList.remove("show");
+
   if (selectedGenre) {
-    fetchRandomMovie(selectedGenre, selectedLanguage);
+    fetchRandomMovie(selectedGenre, selectedLanguage, voteAverage, voteCount);
   } else {
     movieDetails.innerHTML = "<p>Please select a genre first.</p>";
   }
